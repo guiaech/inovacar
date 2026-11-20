@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/guiaech/inovacar/schemas/imovel.json",
+  "title": "Imovel do CAR (camada AREA_IMOVEL)",
+  "description": "Propriedades de uma linha da camada imoveis do CAR Aberto. Geometria MultiPolygon em EPSG:4674. Ver docs/dicionario.md.",
+  "type": "object",
+  "required": [
+    "id_registro", "cod_tema", "nom_tema", "cod_imovel", "mod_fiscal", "num_area", "ind_status",
+    "ind_tipo", "des_condic", "municipio", "cod_estado", "dat_criaca", "dat_atuali",
+    "cod_municipio_ibge", "area_ha"
+  ],
+  "properties": {
+    "id_registro": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}(-[0-9]+)?$",
+      "description": "Derivado. Chave da linha (cod_imovel se repete na base publica)."
+    },
+    "cod_tema": {"type": "string", "description": "Codigo do tema. Na camada AREA_IMOVEL: AREA_IMOVEL."},
+    "nom_tema": {"type": "string", "description": "Nome do tema. Na camada AREA_IMOVEL: Area do Imovel."},
+    "cod_imovel": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}-[0-9]{7}-[0-9A-F]{32}$",
+      "description": "Numero de inscricao no Sicar. Nao e unico na base publica."
+    },
+    "mod_fiscal": {"type": ["number", "null"], "minimum": 0, "description": "Modulos fiscais."},
+    "num_area": {"type": ["number", "null"], "minimum": 0, "description": "Area bruta declarada, em ha."},
+    "ind_status": {
+      "type": "string",
+      "enum": ["AT", "PE", "SU", "CA"],
+      "description": "AT ativo, PE pendente, SU suspenso, CA cancelado."
+    },
+    "ind_tipo": {
+      "type": "string",
+      "enum": ["IRU", "AST", "PCT"],
+      "description": "IRU imovel rural, AST assentamento de reforma agraria, PCT povos e comunidades tradicionais."
+    },
+    "des_condic": {
+      "type": "string",
+      "description": "Condicao da analise. Valores observados (GO 2026-11-01) em examples; lista aberta, novos valores podem surgir.",
+      "examples": [
+        "Aguardando analise",
+        "Analisado, aguardando atendimento a notificacao",
+        "Cancelado por decisao administrativa",
+        "Cancelado por duplicidade",
+        "Aguardando analise, apos revisao ou atendimento da notificacao",
+        "Cancelado por solicitacao do proprietario/possuidor",
+        "Analisado, em conformidade com a Lei n 12.651/2012",
+        "Analisado, aguardando regularizacao ambiental (Lei n 12.651/2012)",
+        "Cancelado por alteracao na base de municipios",
+        "Analisado, em conformidade com a Lei n 12.651/2012, com ativos ambientais",
+        "Em analise",
+        "Cancelado por decisao judicial"
+      ]
+    },
+    "municipio": {"type": "string", "description": "Municipio de localizacao, ASCII sem acento."},
+    "cod_estado": {"type": "string", "pattern": "^[A-Z]{2}$"},
+    "dat_criaca": {"type": ["string", "null"], "format": "date", "description": "Data da inscricao (ISO 8601)."},
+    "dat_atuali": {"type": ["string", "null"], "format": "date", "description": "Data da ultima modificacao (ISO 8601)."},
+    "cod_municipio_ibge": {
+      "type": "string",
+      "pattern": "^[0-9]{7}$",
+      "description": "Derivado de cod_imovel. Municipio da inscricao; pode diferir de municipio."
+    },
+    "area_ha": {"type": "number", "minimum": 0, "description": "Derivado. Area da geometria em Albers IBGE, em ha."},
+    "h3_centroide_r9": {"type": ["string", "null"], "pattern": "^[0-9a-f]{15}$", "description": "Derivado. H3 res 9 do centroide."},
+    "uf": {"type": "string", "pattern": "^[a-z]{2}$", "description": "Particao."},
+    "snapshot": {"type": "string", "format": "date", "description": "Particao. Data de disponibilizacao no Sicar."}
+  }
+}
