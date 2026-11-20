@@ -50,6 +50,14 @@ def gravar(gdf: gpd.GeoDataFrame, destino: Path) -> Path:
     return arq
 
 
+def _relativo(p: Path) -> str:
+    """Caminho relativo a raiz do projeto, para relatorios nao exporem a maquina local."""
+    try:
+        return p.resolve().relative_to(config.RAIZ).as_posix()
+    except ValueError:
+        return p.name
+
+
 def validar(arq: Path, n_esperado: int | None = None) -> dict:
     """Confere metadados GeoParquet 1.1, bbox covering, CRS, zstd e tamanho dos row groups."""
     pf = pq.ParquetFile(arq)
@@ -81,7 +89,7 @@ def validar(arq: Path, n_esperado: int | None = None) -> dict:
     if erros:
         raise ValueError(f"GeoParquet invalido: {erros}")
     return {
-        "arquivo": str(arq),
+        "arquivo": _relativo(arq),
         "bytes": arq.stat().st_size,
         "linhas": md.num_rows,
         "row_groups": md.num_row_groups,

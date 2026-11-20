@@ -29,7 +29,7 @@ Ingestão de maio: [evidencias/ingestao_go_2026-05-03.json](evidencias/ingestao_
 | Divergência p95 | 0,14% |
 | Linhas com divergência acima de 1% | 0,013% |
 | Tempo de leitura + limpeza | ~15 s |
-| Validação externa (`gpio check all`) | 30 checagens da especificação aprovadas, ordem espacial confirmada, bbox covering, ZSTD |
+| Validação externa (`gpio check all`) | 30 checagens da especificação aprovadas, ordem espacial confirmada, bbox covering, ZSTD. Avisos: row group abaixo da faixa sugerida pelo gpio para leitura em lote (escolha deliberada, ver seção 4) |
 
 
 ## 3. Tamanho
@@ -67,8 +67,8 @@ versões e trate as latências como ordem de grandeza.
 |---|---:|
 | Bytes lidos localmente, mediana | **4,0 MB** (sessão 1: 6,4 MB; zip: 168,6 MB, sem contar o tempo de download) |
 | Bytes lidos, máximo | 147,2 MB (filtro de alcance estadual) |
-| Latência a frio p50 / p95 | 42 ms / 320 ms |
-| Latência com cache p50 / p95 | 53 ms / 330 ms |
+| Latência, conexão DuckDB nova, p50 / p95 | 42 ms / 320 ms |
+| Latência, mesma conexão, p50 / p95 | 53 ms / 330 ms |
 
 | # | Tipo | Consulta | Linhas | MB lidos sessão 1 | MB lidos sessão 2 | ms frio |
 |---:|---|---|---:|---:|---:|---:|
@@ -126,7 +126,7 @@ relatório de ingestão com a saída do `gpio check`: [evidencias/ingestao_go_20
   | 5.000 | 9,2 MB | 0,41 | 3,82 |
   | 2.000 | 9,5 MB | 0,44 | 3,85 |
 
-  Platô a partir de 10 a 20 mil. Medido ainda com glob sobre os dois snapshots; os ~3,4 MB restantes são o bloco de geometria de um row group do GeoParquet.
+  Platô a partir de 10 a 20 mil. Medido com o glob antigo sobre os dois snapshots (+0,26 MB fixo em todas as linhas, não muda a escolha); os ~3,4 MB restantes são o bloco de geometria de um row group do GeoParquet.
 
 - **Tabela auxiliar ordenada por cod_imovel.** O GeoParquet é ordenado por Hilbert, então o código fica espalhado e a busca lia a
   coluna `cod_imovel` inteira. A tabela (`cod_imovel`, `id_registro`, bbox) isola o código em um row group; o bbox devolvido poda
@@ -147,3 +147,6 @@ relatório de ingestão com a saída do `gpio check`: [evidencias/ingestao_go_20
 - Filtros de alcance estadual com geometria (AST, faixa de área) ainda leem o arquivo inteiro, porque as linhas estão espalhadas
   pela UF. Sem geometria (`com_geometria=False`, ou export CSV sem geometria) leem só as colunas de atributo.
 - Medição remota (httpfs contra bucket, bytes por Range Request, a frio de verdade) pendente: exige o bucket da etapa de deploy.
+- As consultas com 1.000 linhas (15, 18 e 20) param no `limit`; os bytes medem a primeira página, não a resposta completa.
+- O p95 mistura tipos de consulta diferentes; as tabelas por tipo acima são a leitura correta.
+- Bytes lidos localmente indicam, mas não provam, a economia em Range Requests: a prova é a medição remota.

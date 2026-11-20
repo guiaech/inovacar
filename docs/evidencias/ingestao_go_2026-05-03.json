@@ -62,7 +62,7 @@
     }
   },
   "parquet": {
-    "arquivo": "C:\\Users\\guilh\\Desktop\\inovacar\\data\\parquet\\uf=go\\snapshot=2026-05-03\\part-0.parquet",
+    "arquivo": "data/parquet/uf=go/snapshot=2026-05-03/part-0.parquet",
     "bytes": 145092446,
     "linhas": 239600,
     "row_groups": 48,

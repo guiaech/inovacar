@@ -8,7 +8,8 @@ O que depende de login gov.br ficou marcado como pendente de conferência manual
 - Consulta pública do Sicar, base de downloads por UF: shapefile zipado por camada (ex.: `AREA_IMOVEL.zip`), com data de
   disponibilização exibida na página.
 - Download manual, com captcha. O CAR Aberto não automatiza o captcha.
-- Só a versão atual de cada UF fica disponível. Versões anteriores precisam ser guardadas por quem baixou
+- Na página de downloads usada em 2026-05 e 2026-11, cada UF oferece um único arquivo por camada, com a data de disponibilização
+  vigente; não encontramos versões anteriores para baixar. Versões anteriores ficam com quem as guardou
   (ver [historico.md](historico.md)).
 - Observação técnica: `consultapublica.car.gov.br/publico/imoveis/index` responde com redirecionamento circular
   http ↔ https para clientes automatizados (301 para https, 302 de volta para http). No navegador funciona.
@@ -36,8 +37,9 @@ O que dá para afirmar a partir do código público da página (`/assets/index-D
 | WMS 1.3.0 GetCapabilities | 200, mas só a camada raiz "GeoServer Web Map Service": **nenhuma camada publicada** |
 | WFS 2.0.0 GetCapabilities | 200, **nenhum FeatureType publicado**; limite padrão `CountDefault = 10000`; saída GML 3.2 |
 
-Conclusão: o GeoServer existe e é a origem dos downloads e do mapa da nova plataforma, mas não oferece camada OGC aberta
-para acesso anônimo. O acesso passa pela aplicação, com login e captcha.
+Conclusão: o GeoServer responde, mas não oferece camada OGC aberta para acesso anônimo. Pelo código da página, ele parece ser
+a origem do mapa e dos links de download da nova plataforma (inferência a partir do front, a confirmar com login).
+O acesso passa pela aplicação, com login e captcha.
 
 ## 4. APIs SICAR no catálogo Conecta
 
@@ -51,7 +53,7 @@ integrados ao Conecta. O CAR Aberto as complementa e não concorre com elas.
 
 | Fonte | Frequência observada |
 |---|---|
-| Base de downloads por UF | Em nov/2026 todas as UFs com disponibilização em 01 ou 02/11. Indício de ciclo mensal, a confirmar em 01/12 |
+| Base de downloads por UF | Observação manual em nov/2026 (sem registro salvo): datas de disponibilização em 01 ou 02/11. Indício de ciclo mensal, a confirmar em 01/12 com print |
 | Geoserviços da nova plataforma | **Pendente.** Não verificável sem login; conferir manualmente se os arquivos indicam data de referência |
 | GeoServer anônimo | Não se aplica: sem camadas públicas |
 
@@ -64,7 +66,8 @@ integrados ao Conecta. O CAR Aberto as complementa e não concorre com elas.
 
 ## O que isso muda para o CAR Aberto
 
-- A oferta oficial melhorou: o recorte por município reduz o download em relação ao zip da UF.
+- Se o recorte por município da nova plataforma incluir AREA_IMOVEL, o download oficial fica menor que o zip da UF
+  (a medir, ver pendência 1).
 - Continua sem: acesso anônimo e automatizável, consulta pontual por código ou coordenada, API OGC aberta, histórico entre
   versões e leitura parcial por HTTP. É esse o espaço do CAR Aberto, como padrão que o próprio SFB/MGI pode adotar para publicar
   a base em formato cloud-native, reaproveitando o GeoServer existente como fonte.
