@@ -119,6 +119,14 @@ def _parear_sobras(a: pd.DataFrame, b: pd.DataFrame) -> list[tuple[int, int]]:
     return pares
 
 
+def _data_mudou(a, b) -> bool:
+    """Compara datas tratando nulo (None, NaT, NaN) como igual a nulo."""
+    na, nb = a is None or pd.isna(a), b is None or pd.isna(b)
+    if na or nb:
+        return na != nb
+    return pd.Timestamp(a).date() != pd.Timestamp(b).date()
+
+
 def _data_provavel(dat_atuali, inicio: dt.date, fim: dt.date):
     if dat_atuali is None or pd.isna(dat_atuali):
         return None
@@ -160,7 +168,8 @@ def comparar(
     # 1. mesmo id_registro
     m = ant.reset_index().merge(atu.reset_index(), on="id_registro", suffixes=("_a", "_b"))
     iguais_a, iguais_b = set(m["index_a"]), set(m["index_b"])
-    mud = m[m["dat_atuali_a"].astype(str) != m["dat_atuali_b"].astype(str)]
+    mudou = [_data_mudou(a, b) for a, b in zip(m["dat_atuali_a"], m["dat_atuali_b"], strict=True)]
+    mud = m[np.array(mudou, dtype=bool)]
     for ia, ib in zip(mud["index_a"], mud["index_b"], strict=True):
         x, y = ant.loc[ia], atu.loc[ib]
         ev("mudanca_dat_atuali", "registro", x, y, x["dat_atuali"], y["dat_atuali"])
@@ -184,7 +193,7 @@ def comparar(
                 ev("mudanca_area", "registro", x, y, round(na, 4), round(nb, 4))
             if geo[k] < LIMIAR_IOU:
                 ev("mudanca_geometria", "registro", x, y, None, round(float(geo[k]), 4))
-            if str(x["dat_atuali"]) != str(y["dat_atuali"]):
+            if _data_mudou(x["dat_atuali"], y["dat_atuali"]):
                 ev("mudanca_dat_atuali", "registro", x, y, x["dat_atuali"], y["dat_atuali"])
 
     # 3. sem par

@@ -120,3 +120,17 @@ def test_gravar_eventos(tmp_path):
     assert t.num_rows == len(df)
     assert str(t.schema.field("data_provavel").type) == "date32[day]"
     assert "intervalo=2026-05-03_2026-11-01" in str(arq)
+
+
+def test_dat_atuali_nula_nos_dois_lados_nao_e_mudanca():
+    assert eventos([reg("A", dat=None)], [reg("A", dat=None)]).empty
+
+
+def test_dat_atuali_nula_em_registro_pareado_nao_e_mudanca():
+    df = eventos([reg("A", "AT", dat=None)], [reg("A", "CA", dat=None)])
+    assert tipos(df) == ["mudanca_ind_status"]
+
+
+def test_dat_atuali_de_nula_para_preenchida_e_mudanca():
+    df = eventos([reg("A", dat=None)], [reg("A", dat="2026-07-01")])
+    assert tipos(df) == ["mudanca_dat_atuali"]
