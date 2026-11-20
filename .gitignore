@@ -1,0 +1,14 @@
+data/
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.env
+.claude/settings.local.json
+# notas internas de trabalho, fora do repositorio publico
+CLAUDE.md
+KICKOFF.md
+.claude/
+docs/edital/

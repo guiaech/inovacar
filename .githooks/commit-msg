@@ -1,0 +1,4 @@
+#!/bin/sh
+# Remove linhas de atribuicao automatica de IA da mensagem de commit.
+sed -i.bak -E '/^[Cc]o-[Aa]uthored-[Bb]y:.*([Cc]laude|[Aa]nthropic)/d; /Generated with \[?Claude Code/d; /claude\.ai\/code/d' "$1"
+rm -f "$1.bak"
