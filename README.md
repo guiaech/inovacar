@@ -1,8 +1,13 @@
 # CAR Aberto
 
-Pipeline e padrão aberto para publicar a base do Cadastro Ambiental Rural (CAR) em formato cloud-native:
-GeoParquet otimizado, índice H3, consulta pontual sem baixar o shapefile da UF, histórico de mudanças entre
-disponibilizações e API OGC.
+Pipeline e padrão aberto para publicar a base do Cadastro Ambiental Rural (CAR) em formato cloud-native.
+
+Hoje, consultar um único imóvel de Goiás exige baixar o zip da UF inteira (168,6 MB) e abrir 860 MB de shapefile.
+No CAR Aberto, a mesma consulta lê em mediana 6,4 MB de um GeoParquet otimizado, em cerca de 30 ms
+(medição local, [docs/metricas.md](docs/metricas.md)), sem tocar no Sicar.
+
+Pronto: ingestão validada, GeoParquet 1.1 (Hilbert, bbox, zstd), índice H3, consultas por código, ponto, bbox e filtros.
+Em desenvolvimento: histórico de mudanças entre disponibilizações, API OGC API Features e implantação pública.
 
 Projeto inscrito no InovaCAR, Ciclo 1, Desafio 3 (Edital 299/2026).
 

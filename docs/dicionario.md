@@ -5,7 +5,7 @@ Fonte oficial: [Dicionario_de_Dados_SICAR.pdf](fonte/Dicionario_de_Dados_SICAR.p
 Esquema formal: [schemas/imovel.json](../schemas/imovel.json) (JSON Schema 2020-12).
 
 Formato publicado: GeoParquet 1.1, geometria MultiPolygon em EPSG:4674 (SIRGAS 2000), particionado por `uf` e `snapshot`.
-Todo campo derivado é marcado como tal. Nenhum campo pessoal existe na camada pública (ver [lgpd.md](lgpd.md), a escrever).
+Todo campo derivado é marcado como tal. Nenhum campo pessoal existe na camada pública. O tratamento LGPD será documentado em `docs/lgpd.md` (em elaboração).
 
 ## Campos de origem (Sicar)
 

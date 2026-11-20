@@ -1,7 +1,7 @@
 """Grava o snapshot como GeoParquet 1.1 otimizado para leitura parcial por HTTP.
 
-Linhas ordenadas por curva de Hilbert, coluna bbox (covering), row groups de cerca de
-50 mil linhas e compressao zstd. Saida em data/parquet/uf={uf}/snapshot={aaaa-mm-dd}/.
+Linhas ordenadas por curva de Hilbert, coluna bbox (covering), row groups de
+config.ROW_GROUP linhas (5 mil, escolhido por medicao) e compressao zstd. Saida em data/parquet/uf={uf}/snapshot={aaaa-mm-dd}/.
 """
 
 from __future__ import annotations

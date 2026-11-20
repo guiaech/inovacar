@@ -1,0 +1,178 @@
+{
+  "uf": "go",
+  "snapshot": "2026-11-01",
+  "zip_sicar_bytes": 168566814,
+  "shapefile_descompactado_bytes": 860438492,
+  "geoparquet_bytes": 147161006,
+  "indice_h3_bytes": 8641928,
+  "abrir_shapefile_inteiro_s": 5.0,
+  "bytes_lidos_mediana": 6362585,
+  "bytes_lidos_max": 147161002,
+  "ms_frio_p50": 30.8,
+  "ms_frio_p95": 164.5,
+  "ms_cache_p50": 30.0,
+  "ms_cache_p95": 180.1,
+  "ms_frio_media": 47.7,
+  "consultas": [
+    {
+      "tipo": "codigo",
+      "consulta": "cod_imovel=GO-5201504-7A0B70384...",
+      "linhas": 12,
+      "bytes_lidos": 8108836,
+      "ms_frio": 29.5,
+      "ms_cache": 26.9
+    },
+    {
+      "tipo": "codigo",
+      "consulta": "cod_imovel=GO-5203302-56E3CEA8A...",
+      "linhas": 1,
+      "bytes_lidos": 6342134,
+      "ms_frio": 18.4,
+      "ms_cache": 17.8
+    },
+    {
+      "tipo": "codigo",
+      "consulta": "cod_imovel=GO-5214804-3B60BFF6D...",
+      "linhas": 1,
+      "bytes_lidos": 8087732,
+      "ms_frio": 25.3,
+      "ms_cache": 21.2
+    },
+    {
+      "tipo": "codigo",
+      "consulta": "cod_imovel=GO-5201108-1126849AC...",
+      "linhas": 1,
+      "bytes_lidos": 4789186,
+      "ms_frio": 15.4,
+      "ms_cache": 13.9
+    },
+    {
+      "tipo": "codigo",
+      "consulta": "cod_imovel=GO-5200308-1797517E8...",
+      "linhas": 1,
+      "bytes_lidos": 4420077,
+      "ms_frio": 15.8,
+      "ms_cache": 14.4
+    },
+    {
+      "tipo": "ponto",
+      "consulta": "lon=-49.7564 lat=-14.9682",
+      "linhas": 1,
+      "bytes_lidos": 6383037,
+      "ms_frio": 29.3,
+      "ms_cache": 29.7
+    },
+    {
+      "tipo": "ponto",
+      "consulta": "lon=-50.8104 lat=-17.1475",
+      "linhas": 2,
+      "bytes_lidos": 6217291,
+      "ms_frio": 32.1,
+      "ms_cache": 32.4
+    },
+    {
+      "tipo": "ponto",
+      "consulta": "lon=-51.8156 lat=-16.4875",
+      "linhas": 1,
+      "bytes_lidos": 6014163,
+      "ms_frio": 37.1,
+      "ms_cache": 37.1
+    },
+    {
+      "tipo": "ponto",
+      "consulta": "lon=-49.3162 lat=-18.5195",
+      "linhas": 1,
+      "bytes_lidos": 6336137,
+      "ms_frio": 41.2,
+      "ms_cache": 42.9
+    },
+    {
+      "tipo": "ponto",
+      "consulta": "lon=-49.0478 lat=-13.8627",
+      "linhas": 1,
+      "bytes_lidos": 6266157,
+      "ms_frio": 33.6,
+      "ms_cache": 30.4
+    },
+    {
+      "tipo": "bbox",
+      "consulta": "janela 0.01 grau",
+      "linhas": 17,
+      "bytes_lidos": 2875720,
+      "ms_frio": 25.9,
+      "ms_cache": 22.1
+    },
+    {
+      "tipo": "bbox",
+      "consulta": "janela 0.01 grau",
+      "linhas": 16,
+      "bytes_lidos": 4104876,
+      "ms_frio": 20.5,
+      "ms_cache": 17.4
+    },
+    {
+      "tipo": "bbox",
+      "consulta": "janela 0.1 grau",
+      "linhas": 193,
+      "bytes_lidos": 4509633,
+      "ms_frio": 23.9,
+      "ms_cache": 22.0
+    },
+    {
+      "tipo": "bbox",
+      "consulta": "janela 0.1 grau",
+      "linhas": 198,
+      "bytes_lidos": 6846571,
+      "ms_frio": 25.0,
+      "ms_cache": 22.4
+    },
+    {
+      "tipo": "filtros",
+      "consulta": "municipio=Rio Verde",
+      "linhas": 1000,
+      "bytes_lidos": 37550340,
+      "ms_frio": 64.1,
+      "ms_cache": 57.7
+    },
+    {
+      "tipo": "filtros",
+      "consulta": "cod_municipio_ibge=5208707, excluir_cancelados=True",
+      "linhas": 853,
+      "bytes_lidos": 21647185,
+      "ms_frio": 41.7,
+      "ms_cache": 39.6
+    },
+    {
+      "tipo": "filtros",
+      "consulta": "ind_status=PE, municipio=Jatai",
+      "linhas": 354,
+      "bytes_lidos": 31417425,
+      "ms_frio": 57.5,
+      "ms_cache": 62.5
+    },
+    {
+      "tipo": "filtros",
+      "consulta": "ind_tipo=AST",
+      "linhas": 1000,
+      "bytes_lidos": 144942884,
+      "ms_frio": 162.7,
+      "ms_cache": 179.7
+    },
+    {
+      "tipo": "filtros",
+      "consulta": "des_condic=Analisado, aguardando atendimento a notificacao, municipio=Mineiros",
+      "linhas": 71,
+      "bytes_lidos": 29075406,
+      "ms_frio": 55.4,
+      "ms_cache": 51.7
+    },
+    {
+      "tipo": "filtros",
+      "consulta": "area_min=1000, area_max=5000, mod_fiscal_min=15, excluir_cancelados=True",
+      "linhas": 1000,
+      "bytes_lidos": 147161002,
+      "ms_frio": 198.8,
+      "ms_cache": 188.0
+    }
+  ]
+}

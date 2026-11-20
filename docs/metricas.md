@@ -6,12 +6,14 @@ Todas as medições são reproduzíveis com os scripts citados. Máquina: notebo
 
 | Snapshot de GO (AREA_IMOVEL) | Linhas | Origem |
 |---|---:|---|
-| 2026-05-03 | 239.600 | base usada no projeto CPSI, data anterior |
-| 2026-11-01 | 246.211 | snapshot de referência desta etapa |
+| 2026-05-03 (data interna dos arquivos do zip) | 239.600 | base usada no projeto CPSI, baixada antes |
+| 2026-11-01 | 246.211 | snapshot de referência desta etapa, com manifest e SHA-256 |
 
-Em seis meses a camada pública de GO ganhou **6.611 linhas líquidas (+2,8%)**. Como o Sicar republica a base inteira e não guarda
-versões anteriores para download, quem só baixa a versão atual perde essa trajetória. É isso que o histórico do CAR Aberto preserva.
-(Diferença líquida: entradas, saídas e mudanças de situação só aparecem no diff por imóvel, previsto para a próxima etapa.)
+Entre as duas versões a camada pública de GO ganhou **6.611 linhas (+2,8%)**, contando linhas e não imóveis
+(a base tem códigos repetidos e cancelados). A consulta pública oferece para download só a versão atual de cada UF;
+quem não guardou a versão anterior perde essa trajetória. É isso que o histórico do CAR Aberto preserva.
+Entradas, saídas e mudanças de situação só aparecem no diff por registro, previsto para a próxima etapa.
+Pendente: arquivar o zip de 2026-05-03 com manifest e confirmar sua data de disponibilização.
 
 ## 2. Ingestão de GO, 2026-11-01
 
@@ -53,7 +55,7 @@ sistema operacional está quente nos dois casos; a medição a frio de verdade �
 
 | Resumo | Valor |
 |---|---:|
-| Bytes lidos, mediana | **6,4 MB** (26x menos que o zip) |
+| Bytes lidos localmente, mediana | **6,4 MB** (contra 168,6 MB do zip, sem contar o tempo de download) |
 | Bytes lidos, máximo | 147,2 MB (filtro de alcance estadual) |
 | Latência a frio p50 / p95 | **31 ms** / 165 ms |
 | Latência com cache p50 / p95 | 30 ms / 180 ms |
@@ -82,7 +84,8 @@ sistema operacional está quente nos dois casos; a medição a frio de verdade �
 | 19 | filtros | notificação pendente em Mineiros | 71 | 29,08 | 55,4 |
 | 20 | filtros | 1.000 a 5.000 ha, 15+ MF, sem CA | 1000 | 147,16 | 198,8 |
 
-Resultado bruto: `data/relatorios/bench_local_go_2026-11-01.json`.
+Resultado bruto: [evidencias/bench_local_go_2026-11-01.json](evidencias/bench_local_go_2026-11-01.json);
+relatório de ingestão com a saída do `gpio check`: [evidencias/ingestao_go_2026-11-01.json](evidencias/ingestao_go_2026-11-01.json).
 
 ### Decisões tomadas a partir da medição
 

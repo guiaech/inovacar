@@ -1,0 +1,77 @@
+{
+  "uf": "go",
+  "snapshot": "2026-11-01",
+  "arquivo": "AREA_IMOVEL_1.shp",
+  "encoding": "latin1",
+  "cpg_presente": false,
+  "imoveis_lidos": 246211,
+  "datas_invalidas": {
+    "dat_criaca": 0,
+    "dat_atuali": 0
+  },
+  "datas_nulas": {
+    "dat_criaca": 4,
+    "dat_atuali": 532
+  },
+  "cod_municipio_ibge_fora_da_uf": [
+    "DF-5300108-90ED76B27CAE42969B3A914CF5E2F99B",
+    "DF-5300108-E819FB43D98543CD99CC7596C99A4DDB",
+    "TO-1702000-98936AFB743C4DE6937DF784C919E37E",
+    "MG-3126208-7D4386FC164D4E6993E70691227580F7"
+  ],
+  "cod_imovel_repetidos": {
+    "codigos": 502,
+    "linhas": 1351
+  },
+  "geometria": {
+    "geometrias_nulas_ou_vazias": 0,
+    "geometrias_invalidas_corrigidas": 1,
+    "geometrias_perdidas_apos_correcao": 0,
+    "ainda_invalidas": 0
+  },
+  "area": {
+    "imoveis_comparados": 246207,
+    "divergencia_mediana_pct": 0.046,
+    "divergencia_p95_pct": 0.1426,
+    "pct_imoveis_acima_1pct": 0.013,
+    "pct_imoveis_acima_5pct": 0.004
+  },
+  "valores": {
+    "ind_status": {
+      "AT": 218109,
+      "PE": 23931,
+      "CA": 4170,
+      "SU": 1
+    },
+    "ind_tipo": {
+      "IRU": 244658,
+      "AST": 1534,
+      "PCT": 19
+    },
+    "des_condic": {
+      "Aguardando analise": 220795,
+      "Analisado, aguardando atendimento a notificacao": 19762,
+      "Cancelado por decisao administrativa": 2266,
+      "Cancelado por duplicidade": 1368,
+      "Aguardando analise, apos revisao ou atendimento da notificacao": 1158,
+      "Cancelado por solicitacao do proprietario/possuidor": 522,
+      "Analisado, em conformidade com a Lei n 12.651/2012": 188,
+      "Analisado, aguardando regularizacao ambiental (Lei n 12.651/2012)": 102,
+      "Cancelado por alteracao na base de municipios": 19,
+      "Analisado, em conformidade com a Lei n 12.651/2012, com ativos ambientais": 18,
+      "Em analise": 10,
+      "Cancelado por decisao judicial": 3
+    }
+  },
+  "parquet": {
+    "arquivo": "C:\\Users\\guilh\\Desktop\\inovacar\\data\\parquet\\uf=go\\snapshot=2026-11-01\\part-0.parquet",
+    "bytes": 147161006,
+    "linhas": 246211,
+    "row_groups": 50,
+    "geoparquet": "1.1.0",
+    "geometry_types": [
+      "MultiPolygon"
+    ]
+  },
+  "gpio_check": "Spatial Order Analysis:\n✓ Data appears to be spatially ordered\n\nSpec Validation:\n  ✓ 30 checks passed\n\n                                                                                \n  ⚠ WARNING: part-0.parquet - Row group size is outside recommended range. Target 64-256 MB for best performance\n\n                                                                                \n  ⚠ WARNING: part-0.parquet - Row count per group is outside recommended range (10,000-200,000)\n\nRow Group Analysis:\nNumber of row groups: 50\nAverage group size: 2.80 MB\nRow group size is outside recommended range. Target 64-256 MB for best performance\nAverage rows per group: 4,924\nRow count per group is outside recommended range (10,000-200,000)\n\nTotal file size: 140.18 MB\n\nRow Group Guidelines:\n- Optimal size: 64-256 MB per row group\n- Optimal rows: 10,000-200,000 rows per group (general use)\n- Small files (<64 MB): single row group is fine\n- Spatial queries: 10,000-50,000 rows per group with Hilbert sorting and GeoParquet v2.0 enables optimal row group skipping (gpio writes 49,152 by default)\n\nGeoParquet Metadata:\n✓ Version 1.1.0\n✓ Found bbox column 'bbox' with proper metadata covering\nℹ️  GeoParquet 2.0 is available, with native spatial stats and filter pushdown. Run: gpio convert geoparquet input.parquet output.parquet --geoparquet-version 2.0\n\nCompression Analysis:\n✓ ZSTD compression on geometry column 'geometry'\n\nBloom Filter Analysis:\nNo bloom filters detected"
+}
