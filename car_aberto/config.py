@@ -7,6 +7,7 @@ DIR_DADOS = RAIZ / "data"
 DIR_RAW = DIR_DADOS / "raw"
 DIR_PARQUET = DIR_DADOS / "parquet"
 DIR_H3 = DIR_DADOS / "h3"
+DIR_CODIGO = DIR_DADOS / "codigo"
 DIR_RELATORIOS = DIR_DADOS / "relatorios"
 
 # CRS de armazenamento: SIRGAS 2000 geografico, igual ao Sicar. Nunca converter para 4326.
@@ -45,6 +46,13 @@ COD_IBGE_UF = {"go": "52", "pa": "15", "rs": "43", "ba": "29"}
 # H3
 H3_RES_COBERTURA = 7
 H3_RES_CENTROIDE = 9
+# Medido em GO: 500 mil linhas por row group fazia a consulta por ponto ler 3,0 MB do indice;
+# com 10 mil le 0,42 MB (platô a partir de 10 a 20 mil).
+ROW_GROUP_H3 = 10_000
+
+# Tabela auxiliar ordenada por cod_imovel. Medido em GO: com 50 mil linhas a etapa auxiliar
+# le 3,25 MB; com 2 mil le 0,22 MB (minimo medido).
+ROW_GROUP_CODIGO = 2_000
 
 # GeoParquet
 # Medido em GO (2026-11-01): com 50 mil linhas cada row group tem ~28 MB de geometria e uma

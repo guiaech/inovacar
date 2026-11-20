@@ -5,6 +5,11 @@ import pytest
 
 from car_aberto.consulta.duck import ConsultaCAR, Fonte
 from car_aberto.ingestao.carregar_uf import carregar_uf
+from car_aberto.ingestao.indice_codigo import (
+    dir_indice_codigo,
+    gravar_indice_codigo,
+    montar_indice_codigo,
+)
 from car_aberto.ingestao.indice_h3 import dir_indice, gravar_indice, montar_indice
 from car_aberto.ingestao.para_geoparquet import converter
 
@@ -23,7 +28,10 @@ def base(tmp_path_factory):
     arq, rel = converter(UF, SNAP, dir_raw=RAW, base=raiz / "parquet")
     gdf = gpd.read_parquet(arq)
     gravar_indice(montar_indice(gdf), dir_indice(UF, SNAP, raiz / "h3"))
-    return {"raiz": raiz, "arq": arq, "rel": rel, "gdf": gdf}
+    arq_cod = gravar_indice_codigo(
+        montar_indice_codigo(gdf), dir_indice_codigo(UF, SNAP, raiz / "codigo")
+    )
+    return {"raiz": raiz, "arq": arq, "arq_codigo": arq_cod, "rel": rel, "gdf": gdf}
 
 
 @pytest.fixture(scope="session")
@@ -31,5 +39,6 @@ def consulta(base):
     fonte = Fonte(
         base_imoveis=(base["raiz"] / "parquet").as_posix(),
         base_h3=(base["raiz"] / "h3").as_posix(),
+        base_codigo=(base["raiz"] / "codigo").as_posix(),
     )
     return ConsultaCAR(UF, fonte=fonte)

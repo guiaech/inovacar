@@ -264,6 +264,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "duckdb" },
+    { name = "fsspec" },
     { name = "geopandas" },
     { name = "h3" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
@@ -285,6 +286,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "duckdb", specifier = ">=1.1" },
+    { name = "fsspec", specifier = ">=2026.9.0" },
     { name = "geopandas", specifier = ">=1.0" },
     { name = "h3", specifier = ">=4.1" },
     { name = "numpy", specifier = ">=1.26" },

@@ -7,6 +7,8 @@ Por padrao todas as situacoes sao devolvidas, inclusive CA; excluir_cancelados=T
 
 from __future__ import annotations
 
+import datetime as dt
+import re
 import unicodedata
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -40,18 +42,25 @@ class Fonte:
 
     base_imoveis: str = field(default_factory=lambda: config.DIR_PARQUET.as_posix())
     base_h3: str = field(default_factory=lambda: config.DIR_H3.as_posix())
+    base_codigo: str = field(default_factory=lambda: config.DIR_CODIGO.as_posix())
 
-    def imoveis(self) -> str:
+    @staticmethod
+    def _ler(base: str, uf: str, snapshot: str) -> str:
+        """Aponta direto para a particao pedida. Um glob sobre todos os snapshots faria o
+        DuckDB ler o rodape de cada arquivo antes de descarta-lo (~0,26 MB por snapshot em GO)."""
         return (
-            f"read_parquet('{self.base_imoveis}/uf=*/snapshot=*/*.parquet', "
+            f"read_parquet('{base}/uf={uf}/snapshot={snapshot}/*.parquet', "
             "hive_partitioning=true, hive_types={'snapshot': VARCHAR})"
         )
 
-    def h3(self) -> str:
-        return (
-            f"read_parquet('{self.base_h3}/uf=*/snapshot=*/*.parquet', "
-            "hive_partitioning=true, hive_types={'snapshot': VARCHAR})"
-        )
+    def imoveis(self, uf: str, snapshot: str) -> str:
+        return self._ler(self.base_imoveis, uf, snapshot)
+
+    def h3(self, uf: str, snapshot: str) -> str:
+        return self._ler(self.base_h3, uf, snapshot)
+
+    def codigo(self, uf: str, snapshot: str) -> str:
+        return self._ler(self.base_codigo, uf, snapshot)
 
 
 def conectar(con: duckdb.DuckDBPyConnection | None = None) -> duckdb.DuckDBPyConnection:
@@ -80,10 +89,19 @@ class ConsultaCAR:
             if not disponiveis:
                 raise FileNotFoundError(f"nenhum snapshot de {self.uf} em {self.fonte}")
             snapshot = disponiveis[-1]
+        # uf e snapshot entram no caminho do arquivo: validar formato
+        if not re.fullmatch(r"[a-z]{2}", self.uf):
+            raise ValueError(f"uf invalida: {uf!r}")
+        dt.date.fromisoformat(snapshot)
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", snapshot):
+            raise ValueError(f"snapshot invalido: {snapshot!r}")
         self.snapshot = snapshot
         self.con = conectar(con)
 
     # utilitarios -----------------------------------------------------------------
+    def _t(self, tabela: str) -> str:
+        return getattr(self.fonte, tabela)(self.uf, self.snapshot)
+
     def _particao(self, alias: str = "") -> str:
         p = f"{alias}." if alias else ""
         return f"{p}uf = '{self.uf}' AND {p}snapshot = '{self.snapshot}'"
@@ -108,12 +126,26 @@ class ConsultaCAR:
 
     # consultas -------------------------------------------------------------------
     def consultar_por_codigo(self, cod_imovel: str) -> gpd.GeoDataFrame:
-        """Todas as linhas com o codigo. cod_imovel se repete na base publica (ver dicionario)."""
-        sql = (
-            f"{self._select()} FROM {self.fonte.imoveis()} i "
-            f"WHERE {self._particao('i')} AND i.cod_imovel = ? ORDER BY i.id_registro"
-        )
-        return self._executar(sql, [cod_imovel.strip()])
+        """Todas as linhas com o codigo. cod_imovel se repete na base publica (ver dicionario).
+
+        Etapa 1: tabela auxiliar ordenada por codigo devolve id_registro e bbox.
+        Etapa 2: GeoParquet filtrado pelo envelope (poda de row groups) e pelos id_registro."""
+        aux = self.con.execute(
+            f"""SELECT id_registro, xmin, ymin, xmax, ymax FROM {self._t("codigo")} c
+                WHERE {self._particao("c")} AND c.cod_imovel = ?""",
+            [cod_imovel.strip()],
+        ).df()
+        if aux.empty:
+            return gpd.GeoDataFrame(geometry=gpd.GeoSeries([], crs=config.CRS_BASE))
+        sql = f"""
+            {self._select()} FROM {self._t("imoveis")} i
+            WHERE {self._particao("i")}
+              AND i.bbox.xmin >= ? AND i.bbox.ymin >= ? AND i.bbox.xmax <= ? AND i.bbox.ymax <= ?
+              AND i.id_registro IN (SELECT unnest(?::VARCHAR[]))
+            ORDER BY i.id_registro
+        """
+        caixa = [aux.xmin.min(), aux.ymin.min(), aux.xmax.max(), aux.ymax.max()]
+        return self._executar(sql, [*caixa, aux["id_registro"].tolist()])
 
     def consultar_por_ponto(self, lon: float, lat: float) -> gpd.GeoDataFrame:
         """Imoveis que contem o ponto (borda inclusa). H3 primeiro, depois ST_Intersects."""
@@ -121,10 +153,10 @@ class ConsultaCAR:
         marcadores = ", ".join("?" for _ in celulas)
         sql = f"""
             WITH candidatos AS (
-                SELECT DISTINCT id_registro FROM {self.fonte.h3()} h
+                SELECT DISTINCT id_registro FROM {self._t("h3")} h
                 WHERE {self._particao("h")} AND h.h3 IN ({marcadores})
             )
-            {self._select()} FROM {self.fonte.imoveis()} i
+            {self._select()} FROM {self._t("imoveis")} i
             WHERE {self._particao("i")}
               AND i.id_registro IN (SELECT id_registro FROM candidatos)
               AND i.bbox.xmin <= ? AND i.bbox.xmax >= ? AND i.bbox.ymin <= ? AND i.bbox.ymax >= ?
@@ -146,7 +178,7 @@ class ConsultaCAR:
         if xmin > xmax or ymin > ymax:
             raise ValueError("bbox invertido")
         sql = f"""
-            {self._select(com_geometria=com_geometria)} FROM {self.fonte.imoveis()} i
+            {self._select(com_geometria=com_geometria)} FROM {self._t("imoveis")} i
             WHERE {self._particao("i")}
               AND i.bbox.xmax >= ? AND i.bbox.xmin <= ? AND i.bbox.ymax >= ? AND i.bbox.ymin <= ?
               AND ST_Intersects(i.geometry, ST_MakeEnvelope(?, ?, ?, ?))
@@ -204,7 +236,7 @@ class ConsultaCAR:
             conds.append("i.ind_status <> 'CA'")
         sql = (
             f"{self._select(com_geometria=False)}, i.bbox.xmin AS _x0, i.bbox.ymin AS _y0, "
-            f"i.bbox.xmax AS _x1, i.bbox.ymax AS _y1 FROM {self.fonte.imoveis()} i "
+            f"i.bbox.xmax AS _x1, i.bbox.ymax AS _y1 FROM {self._t('imoveis')} i "
             f"WHERE {' AND '.join(conds)} {self._paginacao(limit, offset)}"
         )
         df = self.con.execute(sql, params).df()
@@ -222,7 +254,7 @@ class ConsultaCAR:
         xmin, ymin, xmax, ymax = caixa
         sql = f"""
             SELECT i.id_registro, ST_AsWKB(i.geometry) AS geom_wkb
-            FROM {self.fonte.imoveis()} i
+            FROM {self._t("imoveis")} i
             WHERE {self._particao("i")}
               AND i.bbox.xmin >= ? AND i.bbox.ymin >= ? AND i.bbox.xmax <= ? AND i.bbox.ymax <= ?
               AND i.id_registro IN (SELECT unnest(?::VARCHAR[]))

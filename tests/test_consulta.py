@@ -121,3 +121,12 @@ def test_filtro_des_condic_e_status(consulta, base):
 def test_filtro_ast(consulta):
     r = consulta.consultar_por_filtros(ind_tipo="ast", limit=10)
     assert len(r) >= 1 and set(r["ind_tipo"]) == {"AST"}
+
+
+def test_rejeita_uf_e_snapshot_invalidos(base):
+    from car_aberto.consulta.duck import ConsultaCAR
+
+    with pytest.raises(ValueError):
+        ConsultaCAR("go'; --", snapshot="2026-11-01")
+    with pytest.raises(ValueError):
+        ConsultaCAR("go", snapshot="2026-11-01/../x")

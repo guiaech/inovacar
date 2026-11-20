@@ -93,7 +93,7 @@ def gravar_indice(df: pd.DataFrame, destino: Path) -> Path:
         pa.Table.from_pandas(df, preserve_index=False),
         arq,
         compression=config.COMPRESSAO,
-        row_group_size=500_000,
+        row_group_size=config.ROW_GROUP_H3,
     )
     return arq
 
