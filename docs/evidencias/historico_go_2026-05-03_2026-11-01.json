@@ -1,0 +1,212 @@
+{
+  "uf": "go",
+  "snapshot_anterior": "2026-05-03",
+  "snapshot_atual": "2026-11-01",
+  "total_eventos": 35312,
+  "imoveis_com_evento": 21304,
+  "por_tipo": [
+    {
+      "tipo_evento": "mudanca_dat_atuali",
+      "escopo": "registro",
+      "n": 13660,
+      "com_data": 13122
+    },
+    {
+      "tipo_evento": "novo",
+      "escopo": "imovel",
+      "n": 6549,
+      "com_data": 6543
+    },
+    {
+      "tipo_evento": "mudanca_geometria",
+      "escopo": "registro",
+      "n": 5764,
+      "com_data": 5761
+    },
+    {
+      "tipo_evento": "mudanca_area",
+      "escopo": "registro",
+      "n": 5003,
+      "com_data": 5000
+    },
+    {
+      "tipo_evento": "mudanca_ind_status",
+      "escopo": "registro",
+      "n": 2910,
+      "com_data": 1624
+    },
+    {
+      "tipo_evento": "mudanca_des_condic",
+      "escopo": "registro",
+      "n": 1364,
+      "com_data": 1174
+    },
+    {
+      "tipo_evento": "novo",
+      "escopo": "registro",
+      "n": 62,
+      "com_data": 62
+    }
+  ],
+  "transicoes_ind_status": [
+    {
+      "de": "PE",
+      "para": "AT",
+      "n": 2193
+    },
+    {
+      "de": "AT",
+      "para": "PE",
+      "n": 394
+    },
+    {
+      "de": "AT",
+      "para": "CA",
+      "n": 299
+    },
+    {
+      "de": "PE",
+      "para": "CA",
+      "n": 23
+    },
+    {
+      "de": "PE",
+      "para": "SU",
+      "n": 1
+    }
+  ],
+  "transicoes_des_condic_top10": [
+    {
+      "de": "Analisado, aguardando atendimento a notificacao",
+      "para": "Aguardando analise",
+      "n": 704
+    },
+    {
+      "de": "Aguardando analise",
+      "para": "Cancelado por solicitacao do proprietario/possuidor",
+      "n": 267
+    },
+    {
+      "de": "Aguardando analise, apos revisao ou atendimento da notificacao",
+      "para": "Aguardando analise",
+      "n": 113
+    },
+    {
+      "de": "Aguardando analise",
+      "para": "Aguardando analise, apos revisao ou atendimento da notificacao",
+      "n": 75
+    },
+    {
+      "de": "Aguardando analise",
+      "para": "Analisado, aguardando atendimento a notificacao",
+      "n": 60
+    },
+    {
+      "de": "Aguardando analise",
+      "para": "Cancelado por decisao administrativa",
+      "n": 43
+    },
+    {
+      "de": "Analisado, aguardando atendimento a notificacao",
+      "para": "Aguardando analise, apos revisao ou atendimento da notificacao",
+      "n": 33
+    },
+    {
+      "de": "Analisado, aguardando regularizacao ambiental (Lei n 12.651/2012)",
+      "para": "Aguardando analise",
+      "n": 12
+    },
+    {
+      "de": "Aguardando analise",
+      "para": "Analisado, em conformidade com a Lei n 12.651/2012",
+      "n": 12
+    },
+    {
+      "de": "Analisado, aguardando atendimento a notificacao",
+      "para": "Cancelado por solicitacao do proprietario/possuidor",
+      "n": 8
+    }
+  ],
+  "municipios_top10": [
+    {
+      "municipio": "Rio Verde",
+      "eventos": 614,
+      "imoveis": 634
+    },
+    {
+      "municipio": "Jatai",
+      "eventos": 461,
+      "imoveis": 456
+    },
+    {
+      "municipio": "Niquelandia",
+      "eventos": 434,
+      "imoveis": 446
+    },
+    {
+      "municipio": "Cavalcante",
+      "eventos": 423,
+      "imoveis": 428
+    },
+    {
+      "municipio": "Monte Alegre de Goias",
+      "eventos": 359,
+      "imoveis": 362
+    },
+    {
+      "municipio": "Caiaponia",
+      "eventos": 351,
+      "imoveis": 352
+    },
+    {
+      "municipio": "Catalao",
+      "eventos": 333,
+      "imoveis": 280
+    },
+    {
+      "municipio": "Morrinhos",
+      "eventos": 332,
+      "imoveis": 293
+    },
+    {
+      "municipio": "Itumbiara",
+      "eventos": 323,
+      "imoveis": 253
+    },
+    {
+      "municipio": "Goias",
+      "eventos": 309,
+      "imoveis": 264
+    }
+  ],
+  "eventos_por_mes_provavel": [
+    {
+      "mes": "2026-05",
+      "n": 4362
+    },
+    {
+      "mes": "2026-06",
+      "n": 4774
+    },
+    {
+      "mes": "2026-07",
+      "n": 5324
+    },
+    {
+      "mes": "2026-08",
+      "n": 5676
+    },
+    {
+      "mes": "2026-09",
+      "n": 6908
+    },
+    {
+      "mes": "2026-10",
+      "n": 6233
+    },
+    {
+      "mes": "2026-11",
+      "n": 9
+    }
+  ]
+}
