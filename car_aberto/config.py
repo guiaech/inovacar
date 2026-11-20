@@ -49,3 +49,6 @@ H3_RES_CENTROIDE = 9
 # GeoParquet
 ROW_GROUP = 50_000
 COMPRESSAO = "zstd"
+# Nivel 19: em GO reduz o arquivo de 184 MB (nivel 3) para 146 MB. Escrita mais lenta,
+# feita uma vez por snapshot; a leitura nao muda.
+COMPRESSAO_NIVEL = 19
