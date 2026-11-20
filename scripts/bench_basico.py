@@ -6,7 +6,7 @@ Para cada uma de 20 consultas tipicas mede:
 Linha de base: tamanho do zip original do Sicar e tempo de abrir o shapefile inteiro.
 
 Local, "a frio" significa sem cache do DuckDB; o cache de disco do sistema operacional
-continua quente. A versao remota (httpfs contra bucket, com Range Requests) fica na sessao 2.
+continua quente. A versao remota (httpfs contra bucket, com Range Requests) e outra etapa.
 """
 
 from __future__ import annotations
@@ -19,56 +19,10 @@ import time
 import duckdb
 import geopandas as gpd
 import numpy as np
-from fsspec.implementations.local import LocalFileSystem
 
 from car_aberto import config
 from car_aberto.consulta.duck import ConsultaCAR, Fonte
-
-
-class _Contador:
-    def __init__(self, f, fs):
-        self._f, self._fs = f, fs
-
-    def read(self, n=-1):
-        dados = self._f.read(n)
-        self._fs.bytes_lidos += len(dados)
-        return dados
-
-    def readinto(self, b):
-        n = self._f.readinto(b)
-        self._fs.bytes_lidos += n or 0
-        return n
-
-    def __getattr__(self, nome):
-        return getattr(self._f, nome)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *a):
-        self._f.close()
-
-
-class FSContador(LocalFileSystem):
-    """LocalFileSystem com protocolo proprio que soma os bytes efetivamente lidos."""
-
-    protocol = ("conta",)
-    root_marker = ""
-
-    def __init__(self, *a, **kw):
-        super().__init__(*a, **kw)
-        self.bytes_lidos = 0
-
-    @classmethod
-    def _strip_protocol(cls, path):
-        path = path[len("conta://") :] if str(path).startswith("conta://") else path
-        return super()._strip_protocol(path)
-
-    def _open(self, path, mode="rb", **kw):
-        return _Contador(super()._open(path, mode, **kw), self)
-
-    def unstrip_protocol(self, name):
-        return "conta://" + name
+from car_aberto.consulta.medicao import FSContador
 
 
 def consultas_tipicas(gdf, rng) -> list[tuple[str, str, dict]]:
@@ -123,6 +77,7 @@ def main() -> None:
     shp_bytes = sum(f.stat().st_size for f in raw.iterdir() if f.suffix != ".zip")
     pq_arq = config.DIR_PARQUET / f"uf={a.uf}" / f"snapshot={a.snapshot}" / "part-0.parquet"
     h3_arq = config.DIR_H3 / f"uf={a.uf}" / f"snapshot={a.snapshot}" / "part-0.parquet"
+    cod_arq = config.DIR_CODIGO / f"uf={a.uf}" / f"snapshot={a.snapshot}" / "part-0.parquet"
 
     t0 = time.perf_counter()
     gpd.read_file(next(raw.glob("*.shp")), encoding="latin1", engine="pyogrio")
@@ -135,6 +90,7 @@ def main() -> None:
     fonte_conta = Fonte(
         base_imoveis="conta://" + config.DIR_PARQUET.as_posix(),
         base_h3="conta://" + config.DIR_H3.as_posix(),
+        base_codigo="conta://" + config.DIR_CODIGO.as_posix(),
     )
     c_quente = ConsultaCAR(a.uf, a.snapshot)
 
@@ -144,7 +100,7 @@ def main() -> None:
         con_conta = duckdb.connect()
         con_conta.register_filesystem(fs)
         c_conta = ConsultaCAR(a.uf, a.snapshot, fonte=fonte_conta, con=con_conta)
-        fs.bytes_lidos = 0
+        fs.zerar()
         n = len(executar(c_conta, tipo, args))
         lidos = fs.bytes_lidos
         con_conta.close()
@@ -181,6 +137,7 @@ def main() -> None:
         "shapefile_descompactado_bytes": shp_bytes,
         "geoparquet_bytes": pq_arq.stat().st_size,
         "indice_h3_bytes": h3_arq.stat().st_size,
+        "indice_codigo_bytes": cod_arq.stat().st_size,
         "abrir_shapefile_inteiro_s": round(t_shp, 1),
         "bytes_lidos_mediana": int(statistics.median(b)),
         "bytes_lidos_max": max(b),
