@@ -2,13 +2,13 @@
   "uf": "go",
   "snapshot_anterior": "2026-05-03",
   "snapshot_atual": "2026-11-01",
-  "total_eventos": 35312,
-  "imoveis_com_evento": 21304,
+  "total_eventos": 34780,
+  "imoveis_com_evento": 20785,
   "por_tipo": [
     {
       "tipo_evento": "mudanca_dat_atuali",
       "escopo": "registro",
-      "n": 13660,
+      "n": 13128,
       "com_data": 13122
     },
     {
@@ -48,31 +48,48 @@
       "com_data": 62
     }
   ],
+  "registros_alterados": [
+    {
+      "alterados": 14490,
+      "retificados": 5941,
+      "mudaram_situacao": 2910
+    }
+  ],
   "transicoes_ind_status": [
     {
       "de": "PE",
       "para": "AT",
-      "n": 2193
+      "n": 2193,
+      "com_data": 1312,
+      "pct_com_data": 60.0
     },
     {
       "de": "AT",
       "para": "PE",
-      "n": 394
+      "n": 394,
+      "com_data": 79,
+      "pct_com_data": 20.0
     },
     {
       "de": "AT",
       "para": "CA",
-      "n": 299
+      "n": 299,
+      "com_data": 210,
+      "pct_com_data": 70.0
     },
     {
       "de": "PE",
       "para": "CA",
-      "n": 23
+      "n": 23,
+      "com_data": 23,
+      "pct_com_data": 100.0
     },
     {
       "de": "PE",
       "para": "SU",
-      "n": 1
+      "n": 1,
+      "com_data": 0,
+      "pct_com_data": 0.0
     }
   ],
   "transicoes_des_condic_top10": [
@@ -112,13 +129,13 @@
       "n": 33
     },
     {
-      "de": "Analisado, aguardando regularizacao ambiental (Lei n 12.651/2012)",
-      "para": "Aguardando analise",
+      "de": "Aguardando analise",
+      "para": "Analisado, em conformidade com a Lei n 12.651/2012",
       "n": 12
     },
     {
-      "de": "Aguardando analise",
-      "para": "Analisado, em conformidade com a Lei n 12.651/2012",
+      "de": "Analisado, aguardando regularizacao ambiental (Lei n 12.651/2012)",
+      "para": "Aguardando analise",
       "n": 12
     },
     {
@@ -131,17 +148,17 @@
     {
       "municipio": "Rio Verde",
       "eventos": 614,
-      "imoveis": 634
+      "imoveis": 629
     },
     {
       "municipio": "Jatai",
       "eventos": 461,
-      "imoveis": 456
+      "imoveis": 450
     },
     {
       "municipio": "Niquelandia",
       "eventos": 434,
-      "imoveis": 446
+      "imoveis": 428
     },
     {
       "municipio": "Cavalcante",
@@ -151,34 +168,36 @@
     {
       "municipio": "Monte Alegre de Goias",
       "eventos": 359,
-      "imoveis": 362
+      "imoveis": 361
     },
     {
       "municipio": "Caiaponia",
       "eventos": 351,
-      "imoveis": 352
+      "imoveis": 348
     },
     {
       "municipio": "Catalao",
       "eventos": 333,
-      "imoveis": 280
+      "imoveis": 272
     },
     {
       "municipio": "Morrinhos",
       "eventos": 332,
-      "imoveis": 293
+      "imoveis": 281
     },
     {
       "municipio": "Itumbiara",
       "eventos": 323,
-      "imoveis": 253
+      "imoveis": 252
     },
     {
       "municipio": "Goias",
       "eventos": 309,
-      "imoveis": 264
+      "imoveis": 250
     }
   ],
+  "geometria_iou_abaixo_0_5": 1494,
+  "novos_com_dat_criaca_anterior_ao_intervalo": 63,
   "eventos_por_mes_provavel": [
     {
       "mes": "2026-05",

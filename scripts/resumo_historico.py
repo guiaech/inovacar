@@ -13,6 +13,7 @@ import duckdb
 
 from car_aberto import config
 from car_aberto.historico.diff import dir_eventos
+from car_aberto.ingestao.para_geoparquet import dir_saida
 
 
 def consultar(con, sql: str) -> list[dict]:
@@ -23,6 +24,7 @@ def consultar(con, sql: str) -> list[dict]:
 
 def resumir(uf: str, ant: str, atu: str) -> dict:
     e = f"read_parquet('{(dir_eventos(uf, ant, atu) / '*.parquet').as_posix()}')"
+    atual = f"read_parquet('{(dir_saida(uf, atu) / '*.parquet').as_posix()}')"
     con = duckdb.connect()
     return {
         "uf": uf,
@@ -37,10 +39,22 @@ def resumir(uf: str, ant: str, atu: str) -> dict:
             f"""SELECT tipo_evento, escopo, count(*) n, count(data_provavel) com_data
                 FROM {e} GROUP BY ALL ORDER BY n DESC""",
         ),
+        "registros_alterados": consultar(
+            con,
+            f"""SELECT count(DISTINCT id_registro_atual) FILTER (
+                         WHERE tipo_evento NOT IN ('novo', 'removido')) AS alterados,
+                       count(DISTINCT id_registro_atual) FILTER (
+                         WHERE tipo_evento IN ('mudanca_area', 'mudanca_geometria')) AS retificados,
+                       count(DISTINCT id_registro_atual) FILTER (
+                         WHERE tipo_evento = 'mudanca_ind_status') AS mudaram_situacao
+                FROM {e}""",
+        ),
         "transicoes_ind_status": consultar(
             con,
-            f"""SELECT valor_anterior AS de, valor_atual AS para, count(*) n FROM {e}
-                WHERE tipo_evento = 'mudanca_ind_status' GROUP BY ALL ORDER BY n DESC""",
+            f"""SELECT valor_anterior AS de, valor_atual AS para, count(*) n,
+                       count(data_provavel) AS com_data,
+                       round(100.0 * count(data_provavel) / count(*), 0) AS pct_com_data
+                FROM {e} WHERE tipo_evento = 'mudanca_ind_status' GROUP BY ALL ORDER BY n DESC""",
         ),
         "transicoes_des_condic_top10": consultar(
             con,
@@ -54,6 +68,16 @@ def resumir(uf: str, ant: str, atu: str) -> dict:
                   count(DISTINCT cod_imovel) AS imoveis
                 FROM {e} GROUP BY 1 ORDER BY eventos DESC LIMIT 10""",
         ),
+        "geometria_iou_abaixo_0_5": consultar(
+            con,
+            f"""SELECT count(*) n FROM {e} WHERE tipo_evento = 'mudanca_geometria'
+                AND try_cast(valor_atual AS DOUBLE) < 0.5""",
+        )[0]["n"],
+        "novos_com_dat_criaca_anterior_ao_intervalo": consultar(
+            con,
+            f"""SELECT count(*) n FROM {e} e JOIN {atual} b ON b.id_registro = e.id_registro_atual
+                WHERE e.tipo_evento = 'novo' AND b.dat_criaca < DATE '{ant}'""",
+        )[0]["n"],
         "eventos_por_mes_provavel": consultar(
             con,
             f"""SELECT strftime(data_provavel, '%Y-%m') AS mes, count(*) n FROM {e}
