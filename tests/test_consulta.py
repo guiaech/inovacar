@@ -106,6 +106,9 @@ def test_filtros_combinados(consulta, base):
         & (gdf.mod_fiscal <= 20)
     ]
     assert len(r) == len(esperado) > 0
+    # geometria da segunda etapa corresponde ao id_registro certo
+    ref = gdf.set_index("id_registro").geometry
+    assert all(g.equals(ref[i]) for i, g in zip(r["id_registro"], r.geometry, strict=True))
 
 
 def test_filtro_des_condic_e_status(consulta, base):

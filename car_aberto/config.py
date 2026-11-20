@@ -47,7 +47,9 @@ H3_RES_COBERTURA = 7
 H3_RES_CENTROIDE = 9
 
 # GeoParquet
-ROW_GROUP = 50_000
+# Medido em GO (2026-11-01): com 50 mil linhas cada row group tem ~28 MB de geometria e uma
+# consulta pontual le ~31 MB; com 5 mil le ~6 MB, e o arquivo cresce menos de 1%.
+ROW_GROUP = 5_000
 COMPRESSAO = "zstd"
 # Nivel 19: em GO reduz o arquivo de 184 MB (nivel 3) para 146 MB. Escrita mais lenta,
 # feita uma vez por snapshot; a leitura nao muda.

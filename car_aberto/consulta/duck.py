@@ -203,10 +203,35 @@ class ConsultaCAR:
         if excluir_cancelados:
             conds.append("i.ind_status <> 'CA'")
         sql = (
-            f"{self._select(com_geometria=com_geometria)} FROM {self.fonte.imoveis()} i "
+            f"{self._select(com_geometria=False)}, i.bbox.xmin AS _x0, i.bbox.ymin AS _y0, "
+            f"i.bbox.xmax AS _x1, i.bbox.ymax AS _y1 FROM {self.fonte.imoveis()} i "
             f"WHERE {' AND '.join(conds)} {self._paginacao(limit, offset)}"
         )
-        return self._executar_talvez_sem_geom(sql, params, com_geometria)
+        df = self.con.execute(sql, params).df()
+        caixa = df.pop("_x0").min(), df.pop("_y0").min(), df.pop("_x1").max(), df.pop("_y1").max()
+        if not com_geometria:
+            return df
+        return self._anexar_geometria(df, caixa)
+
+    def _anexar_geometria(self, df: pd.DataFrame, caixa: tuple) -> gpd.GeoDataFrame:
+        """Segunda etapa dos filtros: busca so a geometria dos id_registro ja selecionados.
+        O envelope do resultado poda row groups pela coluna bbox (base ordenada por Hilbert),
+        entao nao se le a geometria da UF inteira para devolver poucas linhas."""
+        if df.empty:
+            return gpd.GeoDataFrame(df, geometry=gpd.GeoSeries([], crs=config.CRS_BASE))
+        xmin, ymin, xmax, ymax = caixa
+        sql = f"""
+            SELECT i.id_registro, ST_AsWKB(i.geometry) AS geom_wkb
+            FROM {self.fonte.imoveis()} i
+            WHERE {self._particao("i")}
+              AND i.bbox.xmin >= ? AND i.bbox.ymin >= ? AND i.bbox.xmax <= ? AND i.bbox.ymax <= ?
+              AND i.id_registro IN (SELECT unnest(?::VARCHAR[]))
+        """
+        ids = df["id_registro"].tolist()
+        g = self.con.execute(sql, [xmin, ymin, xmax, ymax, ids]).df()
+        wkb = dict(zip(g["id_registro"], g["geom_wkb"].map(bytes), strict=True))
+        geom = shapely.from_wkb([wkb[i] for i in ids])
+        return gpd.GeoDataFrame(df, geometry=gpd.GeoSeries(geom, crs=config.CRS_BASE))
 
     def _executar_talvez_sem_geom(self, sql: str, params: list, com_geometria: bool):
         if com_geometria:
